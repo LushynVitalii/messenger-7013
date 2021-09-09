@@ -12,6 +12,7 @@ import { login } from "./store/utils/thunkCreators";
 import { useStyles } from "./Signup";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import SmsOutlinedIcon from "@material-ui/icons/SmsOutlined";
+import Hidden from "@material-ui/core/Hidden";
 
 const Login = (props) => {
   const classes = useStyles();
@@ -34,31 +35,26 @@ const Login = (props) => {
   return (
     <Grid container className={classes.root}>
       {/* Big Front Image */}
-      <Grid item xs={12} md={5} className={classes.sideImg}>
-        <Grid item xs={12} className={classes.sideImgContent}>
-          <SmsOutlinedIcon className={classes.smsIcon} />
-          <Typography variant="h4">
-            Converse with anyone with any language
-          </Typography>
+      <Hidden xsDown>
+        <Grid item sm={5} className={classes.sideImg}>
+          <Grid item sm={12} className={classes.sideImgContent}>
+            <SmsOutlinedIcon className={classes.smsIcon} />
+            <Typography variant="h4">
+              Converse with anyone with any language
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
+      </Hidden>
 
-      <Grid
-        item
-        container
-        xs={12}
-        md={7}
-        direction="column"
-        className={classes.formContainer}
-      >
+      <Grid item container xs={12} sm={7} direction="column">
         <Grid item container alignItems="center" className={classes.formNav}>
-          <Grid item xs={false} md={4}></Grid>
-          <Grid item xs={6} md={4} className={classes.formNavText}>
+          <Grid item xs={false} sm={2}></Grid>
+          <Grid item xs={6} sm={5} className={classes.formNavText}>
             <Typography variant={isMobile ? null : "h6"}>
               Don't have an account?
             </Typography>
           </Grid>
-          <Grid item container xs={6} md={4} justifyContent="center">
+          <Grid item container xs={6} sm={5} justifyContent="center">
             <Button
               classes={{ root: classes.loginBtn }}
               onClick={() => history.push("/register")}

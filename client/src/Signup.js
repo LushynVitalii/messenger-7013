@@ -14,6 +14,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import bigImage from "./images/bg-img.png";
 import SmsOutlinedIcon from "@material-ui/icons/SmsOutlined";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Hidden from "@material-ui/core/Hidden";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,20 +31,11 @@ export const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
     textAlign: "center",
     color: "hsl(100, 100%, 100%)",
-    [theme.breakpoints.down("sm")]: {
-      height: "20rem",
-      width: "100%",
-    },
   },
   smsIcon: {
     width: "5rem",
     height: "5rem",
     marginBottom: theme.spacing(6),
-    [theme.breakpoints.down("sm")]: {
-      width: "4rem",
-      height: "4rem",
-      marginBottom: theme.spacing(2),
-    },
   },
   sideImgContent: {
     position: "absolute",
@@ -52,25 +44,13 @@ export const useStyles = makeStyles((theme) => ({
     top: "45%",
     webkitTransform: "translate(-50%, -50%)",
     transform: "translate(-50%, -50%)",
-    [theme.breakpoints.down("sm")]: {
-      position: "relative",
-      width: "22rem",
-      top: "65%",
-    },
-  },
-  formContainer: {
-    position: "relative",
   },
   formContent: {
-    position: "absolute",
     width: "70%",
-    left: "50%",
-    top: "54%",
-    webkitTransform: "translate(-50%, -50%)",
-    transform: "translate(-50%, -50%)",
+    margin: "12vh auto",
     [theme.breakpoints.down("sm")]: {
       width: "90%",
-      position: "relative",
+      margin: "3vh auto",
       padding: theme.spacing(3),
       textAlign: "center",
     },
@@ -82,7 +62,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   createBtn: {
-    fontFamily: "Montserrat Alternates, sans-serif",
+    fontFamily: "Montserrat, sans-serif",
     background: "#3A8DFF",
     borderRadius: 3,
     border: 0,
@@ -100,7 +80,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   loginBtn: {
-    fontFamily: "Montserrat Alternates, sans-serif",
+    fontFamily: "Montserrat, sans-serif",
     background: "hsl(0, 0%, 100%)",
     borderRadius: 3,
     border: 0,
@@ -116,6 +96,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   formNav: {
     marginTop: theme.spacing(6),
+    justifyContent: "center",
     color: "hsl(0, 0%, 60%)",
     [theme.breakpoints.down("sm")]: {
       margin: theme.spacing(5, 0, 3, 0),
@@ -132,6 +113,7 @@ export const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("md")]: {
       textAlign: "center",
       fontSize: "1.2rem",
+      padding: theme.spacing(0, 2),
     },
   },
 }));
@@ -166,32 +148,27 @@ const Login = (props) => {
   return (
     <Grid container className={classes.root}>
       {/* Big Front Image */}
-      <Grid item xs={12} md={5} className={classes.sideImg}>
-        <Grid item xs={12} className={classes.sideImgContent}>
-          <SmsOutlinedIcon className={classes.smsIcon} />
-          <Typography variant="h4">
-            Converse with anyone with any language
-          </Typography>
+      <Hidden xsDown>
+        <Grid item sm={5} className={classes.sideImg}>
+          <Grid item sm={12} className={classes.sideImgContent}>
+            <SmsOutlinedIcon className={classes.smsIcon} />
+            <Typography variant="h4">
+              Converse with anyone with any language
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
+      </Hidden>
 
       {/* Sign up form */}
-      <Grid
-        item
-        container
-        xs={12}
-        md={7}
-        direction="column"
-        className={classes.formContainer}
-      >
+      <Grid item container xs={12} sm={7} direction="column">
         <Grid item container alignItems="center" className={classes.formNav}>
-          <Grid item xs={false} md={4}></Grid>
-          <Grid item xs={6} md={4} className={classes.formNavText}>
+          <Grid item xs={false} sm={2}></Grid>
+          <Grid item xs={6} sm={5} className={classes.formNavText}>
             <Typography variant={isMobile ? null : "h6"}>
               Already have an account?
             </Typography>
           </Grid>
-          <Grid item container xs={6} md={4} justifyContent="center">
+          <Grid item container xs={6} sm={5} justifyContent="center">
             <Button
               classes={{ root: classes.loginBtn }}
               onClick={() => history.push("/login")}
@@ -254,7 +231,11 @@ const Login = (props) => {
               </FormHelperText>
             </FormControl>
             <Grid container justifyContent="center">
-              <Button type="submit" variant="contained" classes={{ root: classes.createBtn }}>
+              <Button
+                type="submit"
+                variant="contained"
+                classes={{ root: classes.createBtn }}
+              >
                 Create
               </Button>
             </Grid>
