@@ -3,15 +3,20 @@ import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   Grid,
-  Box,
   Typography,
   Button,
   FormControl,
   TextField,
 } from "@material-ui/core";
 import { login } from "./store/utils/thunkCreators";
+import { useStyles } from "./Signup";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import SmsOutlinedIcon from "@material-ui/icons/SmsOutlined";
+import Hidden from "@material-ui/core/Hidden";
 
 const Login = (props) => {
+  const classes = useStyles();
+  const isMobile = useMediaQuery(`(max-width: 992px)`);
   const history = useHistory();
   const { user, login } = props;
 
@@ -28,40 +33,74 @@ const Login = (props) => {
   }
 
   return (
-    <Grid container justifyContent="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to register?</Typography>
-          <Button onClick={() => history.push("/register")}>Register</Button>
+    <Grid container className={classes.root}>
+      {/* Big Front Image */}
+      <Hidden xsDown>
+        <Grid item sm={5} className={classes.sideImg}>
+          <Grid item sm={12} className={classes.sideImgContent}>
+            <SmsOutlinedIcon className={classes.smsIcon} />
+            <Typography variant="h4">
+              Converse with anyone with any language
+            </Typography>
+          </Grid>
+        </Grid>
+      </Hidden>
+
+      <Grid item container xs={12} sm={7} direction="column">
+        <Grid item container alignItems="center" className={classes.formNav}>
+          <Grid item xs={false} sm={2}></Grid>
+          <Grid item xs={6} sm={5} className={classes.formNavText}>
+            <Typography variant={isMobile ? null : "h6"}>
+              Don't have an account?
+            </Typography>
+          </Grid>
+          <Grid item container xs={6} sm={5} justifyContent="center">
+            <Button
+              classes={{ root: classes.loginBtn }}
+              onClick={() => history.push("/register")}
+            >
+              Register
+            </Button>
+          </Grid>
         </Grid>
         <form onSubmit={handleLogin}>
-          <Grid>
-            <Grid>
-              <FormControl margin="normal" required>
-                <TextField
-                  aria-label="username"
-                  label="Username"
-                  name="username"
-                  type="text"
-                />
-              </FormControl>
-            </Grid>
-            <FormControl margin="normal" required>
+          <Grid item className={classes.formContent}>
+            <Typography variant="h4" className={classes.formHeading}>
+              Welcome back!
+            </Typography>
+            <FormControl fullWidth>
               <TextField
-                label="password"
-                aria-label="password"
-                type="password"
-                name="password"
+                aria-label="username"
+                label="Username"
+                name="username"
+                type="text"
+                required
+                className={classes.textField}
               />
             </FormControl>
-            <Grid>
-              <Button type="submit" variant="contained" size="large">
+            <FormControl fullWidth>
+              <TextField
+                aria-label="password"
+                label="Password"
+                type="password"
+                inputProps={{ minLength: 6 }}
+                name="password"
+                required
+                className={classes.textField}
+              />
+            </FormControl>
+            <Grid container justifyContent="center">
+              <Button
+                type="submit"
+                variant="contained"
+                classes={{ root: classes.createBtn }}
+              >
                 Login
               </Button>
             </Grid>
           </Grid>
         </form>
-      </Box>
+      </Grid>
     </Grid>
   );
 };

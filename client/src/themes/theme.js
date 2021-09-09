@@ -10,6 +10,7 @@ export const theme = createTheme({
       fontWeight: "bold"
     }
   },
+  spacing: factor => `${0.5 * factor}rem`,
   overrides: {
     MuiInput: {
       input: {
