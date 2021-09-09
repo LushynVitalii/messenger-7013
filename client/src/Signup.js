@@ -38,11 +38,11 @@ export const useStyles = makeStyles((theme) => ({
   smsIcon: {
     width: "5rem",
     height: "5rem",
-    marginBottom: "3rem",
+    marginBottom: theme.spacing(6),
     [theme.breakpoints.down("sm")]: {
       width: "4rem",
       height: "4rem",
-      marginBottom: "1rem",
+      marginBottom: theme.spacing(2),
     },
   },
   sideImgContent: {
@@ -63,22 +63,22 @@ export const useStyles = makeStyles((theme) => ({
   },
   formContent: {
     position: "absolute",
+    width: "70%",
     left: "50%",
     top: "54%",
     webkitTransform: "translate(-50%, -50%)",
     transform: "translate(-50%, -50%)",
     [theme.breakpoints.down("sm")]: {
+      width: "90%",
       position: "relative",
-      padding: "1.5rem",
+      padding: theme.spacing(3),
       textAlign: "center",
     },
   },
   textField: {
-    marginTop: "2.5rem",
-    width: "40rem",
-    [theme.breakpoints.down("sm")]: {
-      marginTop: "1.5rem",
-      width: "100%",
+    marginTop: theme.spacing(5),
+    [theme.breakpoints.down("md")]: {
+      marginTop: theme.spacing(3),
     },
   },
   createBtn: {
@@ -90,8 +90,8 @@ export const useStyles = makeStyles((theme) => ({
     color: "white",
     height: "3.8rem",
     width: "11rem",
-    padding: "0 30px",
-    margin: "3rem",
+    padding: theme.spacing(0, 1.875),
+    margin: theme.spacing(6),
     "&:hover": {
       background: "#076fff",
     },
@@ -108,17 +108,17 @@ export const useStyles = makeStyles((theme) => ({
     color: "#3A8DFF",
     height: "3.8rem",
     width: "11rem",
-    padding: "0 30px",
+    padding: theme.spacing(0, 1.875),
     boxShadow: "0 3px 5px 2px rgba(189, 195, 199, .4)",
     [theme.breakpoints.down("sm")]: {
       width: "8rem",
     },
   },
   formNav: {
-    marginTop: "3rem",
+    marginTop: theme.spacing(6),
     color: "hsl(0, 0%, 60%)",
     [theme.breakpoints.down("sm")]: {
-      margin: "2.5rem 0 1.5rem 0",
+      margin: theme.spacing(5, 0, 3, 0),
     },
   },
   formHeading: {
@@ -129,7 +129,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   formNavText: {
     textAlign: "end",
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       textAlign: "center",
       fontSize: "1.2rem",
     },
