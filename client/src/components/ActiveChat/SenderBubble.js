@@ -6,7 +6,7 @@ const useStyles = makeStyles(() => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-end"
+    alignItems: "flex-end",
   },
   date: {
     fontSize: 11,
@@ -23,18 +23,24 @@ const useStyles = makeStyles(() => ({
   },
   bubble: {
     background: "#F4F6FA",
-    borderRadius: "10px 10px 0 10px"
+    borderRadius: "10px 10px 0 10px",
+  },
+  img: {
+    maxHeight: "150px",
+    maxWidth: "150px",
+    borderRadius: "10px 10px 0 10px",
   }
 }));
 
 const SenderBubble = (props) => {
   const classes = useStyles();
-  const { time, text } = props;
+  const { time, text, attachments } = props;
   return (
     <Box className={classes.root}>
       <Typography className={classes.date}>{time}</Typography>
       <Box className={classes.bubble}>
-        <Typography className={classes.text}>{text}</Typography>
+        <img className={classes.img} src={attachments} alt=""/>
+        {text && <Typography className={classes.text}>{text}</Typography>}
       </Box>
     </Box>
   );
