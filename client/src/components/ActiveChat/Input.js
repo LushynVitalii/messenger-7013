@@ -27,7 +27,7 @@ const Input = (props) => {
   const classes = useStyles();
   const [text, setText] = useState("");
   const [imageSelected, setImageSelected] = useState("");
-  const [previewSource, setPreviewSource] = useState("");
+  const [previewSource, setPreviewSource] = useState([]);
   const { postMessage, otherUser, conversationId, user } = props;
 
   const handleChange = (event) => {
@@ -48,7 +48,8 @@ const Input = (props) => {
     };
     await postMessage(reqBody);
     setText("");
-    setPreviewSource("");
+    setPreviewSource([]);
+    setImageSelected("")
   };
 
   const uploadImage = async () => {
@@ -68,34 +69,47 @@ const Input = (props) => {
     return file.url;
   };
   const previewFile = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    for (let i = 0; i < file.length; i++){
+      const reader = new FileReader();
+      reader.readAsDataURL(file[i]);
     reader.onloadend = () => {
-      setPreviewSource(reader.result);
+      setPreviewSource((oldValue) => [...oldValue, reader.result]);
     };
+    }
   };
 
   const onChangeImgHandler = (event) => {
+    console.log(event.target.files)
     setImageSelected(event.target.files[0]);
-    previewFile(event.target.files[0]);
+    previewFile(event.target.files);
   };
+
+  const onChangePreviewSourse = () => {
+    setPreviewSource([]);
+    setImageSelected("");
+  }
+
+  console.log(previewSource);
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
-      {previewSource && (
+      {previewSource && previewSource.length > 0 && (
         <Grid container alignItems="flex-start" justifyContent="flex-start">
-          <IconButton onClick={() => setPreviewSource("")}>
+          <IconButton onClick={onChangePreviewSourse}>
             <HighlightOffIcon />
           </IconButton>
-          <img
-            src={previewSource}
-            alt="chosen"
-            style={{
-              maxHeight: "100px",
-              maxWidth: "100px",
-              borderRadius: "5px",
-            }}
-          />
+          {previewSource.map((img, index) => {
+            return <img
+              key={index}
+              src={img}
+              alt="chosen"
+              style={{
+                maxHeight: "100px",
+                maxWidth: "100px",
+                borderRadius: "5px",
+              }}
+            />
+          })}
         </Grid>
       )}
       <Grid container style={{padding: 0}}>
