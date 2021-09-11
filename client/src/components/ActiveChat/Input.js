@@ -9,17 +9,27 @@ import IconButton from "@material-ui/core/IconButton";
 import { Grid } from "@material-ui/core";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     justifySelf: "flex-end",
-    marginTop: 15,
+    marginTop: theme.spacing(2),
   },
   input: {
     height: 70,
     width: "100%",
     backgroundColor: "#F4F6FA",
     borderRadius: "8, 0, 0, 8",
-    marginBottom: 20,
+    marginBottom: theme.spacing(2.5),
+  },
+  previewImg: {
+    maxHeight: "100px",
+    maxWidth: "100px",
+    borderRadius: "5px",
+    margin: "4px",
+  },
+  sendImgContainer: {
+    marginBottom: "20px",
+    backgroundColor: "hsl(218, 60%, 97%)",
   },
 }));
 
@@ -37,59 +47,64 @@ const Input = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (text.trim() === "" && imageSelected === "") return;
-    const imgURL = await uploadImage();
+
+    const imgArray = [];
+    let imgURL = null;
+    if (imageSelected) {
+      for (let i = 0; i < imageSelected.length; i++) {
+        imgURL = await uploadImage(imageSelected[i]);
+        imgArray.push(imgURL);
+      }
+    }
+
     // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
     const reqBody = {
       text: text,
       recipientId: otherUser.id,
       conversationId,
       sender: conversationId ? null : user,
-      attachments: [imgURL],
+      attachments: imgArray,
     };
     await postMessage(reqBody);
     setText("");
     setPreviewSource([]);
-    setImageSelected("")
+    setImageSelected("");
   };
 
-  const uploadImage = async () => {
+  const uploadImage = async (img) => {
     const formData = new FormData();
-    formData.append("file", imageSelected);
-    formData.append("upload_preset", "meof5088");
+    formData.append("file", img);
+    formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET);
 
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dd9xp5jlw/image/upload",
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_Name}/image/upload`,
       {
         method: "POST",
         body: formData,
       }
     );
     const file = await res.json();
-    console.log(file);
     return file.url;
   };
   const previewFile = (file) => {
-    for (let i = 0; i < file.length; i++){
+    for (let i = 0, j = file.length; i < j; i++) {
       const reader = new FileReader();
       reader.readAsDataURL(file[i]);
-    reader.onloadend = () => {
-      setPreviewSource((oldValue) => [...oldValue, reader.result]);
-    };
+      reader.onloadend = () => {
+        setPreviewSource((oldValue) => [...oldValue, reader.result]);
+      };
     }
   };
 
   const onChangeImgHandler = (event) => {
-    console.log(event.target.files)
-    setImageSelected(event.target.files[0]);
+    setImageSelected(event.target.files);
     previewFile(event.target.files);
   };
 
   const onChangePreviewSourse = () => {
-    setPreviewSource([]);
+    setPreviewSource("");
     setImageSelected("");
-  }
-
-  console.log(previewSource);
+  };
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
@@ -99,20 +114,18 @@ const Input = (props) => {
             <HighlightOffIcon />
           </IconButton>
           {previewSource.map((img, index) => {
-            return <img
-              key={index}
-              src={img}
-              alt="chosen"
-              style={{
-                maxHeight: "100px",
-                maxWidth: "100px",
-                borderRadius: "5px",
-              }}
-            />
+            return (
+              <img
+                key={index + img}
+                src={img}
+                alt="chosen"
+                className={classes.previewImg}
+              />
+            );
           })}
         </Grid>
       )}
-      <Grid container style={{padding: 0}}>
+      <Grid container style={{ padding: 0 }}>
         <Grid item xs={11}>
           <FormControl fullWidth hiddenLabel>
             <FilledInput
@@ -132,7 +145,7 @@ const Input = (props) => {
           direction="row"
           justifyContent="space-around"
           alignItems="center"
-          style={{marginBottom: "20px", backgroundColor: "hsl(218, 60%, 97%)"}}
+          className={classes.sendImgContainer}
         >
           <Grid item>
             <input
@@ -144,19 +157,13 @@ const Input = (props) => {
               onChange={(event) => onChangeImgHandler(event)}
             />
             <label htmlFor="contained-button-file">
-              <IconButton
-                component="span"
-                style={{ padding: 0 }}
-              >
+              <IconButton component="span" style={{ padding: 0 }}>
                 <PhotoLibraryIcon />
               </IconButton>
             </label>
           </Grid>
           <Grid item>
-            <IconButton
-              type="submit"
-              style={{ padding: 0 }}
-            >
+            <IconButton type="submit" style={{ padding: 0 }}>
               <SendIcon />
             </IconButton>
           </Grid>
