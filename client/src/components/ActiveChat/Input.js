@@ -8,6 +8,7 @@ import SendIcon from "@material-ui/icons/Send";
 import IconButton from "@material-ui/core/IconButton";
 import { Grid } from "@material-ui/core";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import { uploadImage } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "100px",
     maxWidth: "100px",
     borderRadius: "5px",
-    margin: "4px",
+    margin: theme.spacing(0.5),
   },
   sendImgContainer: {
-    marginBottom: "20px",
+    marginBottom: theme.spacing(2.5),
     backgroundColor: "hsl(218, 60%, 97%)",
   },
 }));
@@ -36,9 +37,10 @@ const useStyles = makeStyles((theme) => ({
 const Input = (props) => {
   const classes = useStyles();
   const [text, setText] = useState("");
-  const [imageSelected, setImageSelected] = useState("");
+  const [imageSelectedArr, setImageSelectedArr] = useState([]);
   const [previewSource, setPreviewSource] = useState([]);
   const { postMessage, otherUser, conversationId, user } = props;
+  const tempImgArr = [];
 
   const handleChange = (event) => {
     setText(event.target.value);
@@ -46,14 +48,20 @@ const Input = (props) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (text.trim() === "" && imageSelected === "") return;
-
+    if (text.trim() === "" && imageSelectedArr.length === 0) return;
     const imgArray = [];
     let imgURL = null;
-    if (imageSelected) {
-      for (let i = 0; i < imageSelected.length; i++) {
-        imgURL = await uploadImage(imageSelected[i]);
-        imgArray.push(imgURL);
+    if (imageSelectedArr) {
+      for (let i = 0, j = imageSelectedArr.length; i < j; i++) {
+        if (imageSelectedArr[i].length > 0) {
+          for (let k = 0, l = imageSelectedArr[i].length; k < l; k++) {
+            imgURL = await uploadImage(imageSelectedArr[i][k]);
+            imgArray.push(imgURL);
+          }
+        } else {
+          imgURL = await uploadImage(imageSelectedArr[i][0]);
+          imgArray.push(imgURL);
+        }
       }
     }
 
@@ -68,24 +76,9 @@ const Input = (props) => {
     await postMessage(reqBody);
     setText("");
     setPreviewSource([]);
-    setImageSelected("");
+    setImageSelectedArr([]);
   };
 
-  const uploadImage = async (img) => {
-    const formData = new FormData();
-    formData.append("file", img);
-    formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET);
-
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_Name}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-    const file = await res.json();
-    return file.url;
-  };
   const previewFile = (file) => {
     for (let i = 0, j = file.length; i < j; i++) {
       const reader = new FileReader();
@@ -97,20 +90,21 @@ const Input = (props) => {
   };
 
   const onChangeImgHandler = (event) => {
-    setImageSelected(event.target.files);
+    tempImgArr.push.apply(tempImgArr, event.target.files);
+    setImageSelectedArr((oldValue) => [...oldValue, tempImgArr]);
     previewFile(event.target.files);
   };
 
-  const onChangePreviewSourse = () => {
-    setPreviewSource("");
-    setImageSelected("");
+  const onChangePreviewSource = () => {
+    setPreviewSource([]);
+    setImageSelectedArr([]);
   };
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
       {previewSource && previewSource.length > 0 && (
         <Grid container alignItems="flex-start" justifyContent="flex-start">
-          <IconButton onClick={onChangePreviewSourse}>
+          <IconButton onClick={onChangePreviewSource}>
             <HighlightOffIcon />
           </IconButton>
           {previewSource.map((img, index) => {
@@ -155,6 +149,7 @@ const Input = (props) => {
               multiple
               type="file"
               onChange={(event) => onChangeImgHandler(event)}
+              onClick={(event) => (event.target.value = null)}
             />
             <label htmlFor="contained-button-file">
               <IconButton component="span" style={{ padding: 0 }}>

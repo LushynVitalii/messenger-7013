@@ -24,13 +24,18 @@ const useStyles = makeStyles((theme) => ({
   bubble: {
     background: "#F4F6FA",
     borderRadius: "10px 10px 0 10px",
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    textAlign: "right",
   },
   img: {
     maxHeight: "150px",
     maxWidth: "150px",
     borderRadius: "10px 10px 0 10px",
     margin: theme.spacing(1.1, 1.1, 0.6, 1.1),
+    [theme.breakpoints.down("sm")]: {
+      maxHeight: "100px",
+      maxWidth: "100px",
+    },
   },
 }));
 
