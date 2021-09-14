@@ -73,10 +73,14 @@ export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
     const sortedData = data.map((conv) => {
-      return {...conv, messages: conv.messages.sort(
-        (item1, item2) => new Date(item1.createdAt) - new Date(item2.createdAt)
-      )}
-    })
+      return {
+        ...conv,
+        messages: conv.messages.sort(
+          (item1, item2) =>
+            new Date(item1.createdAt) - new Date(item2.createdAt)
+        ),
+      };
+    });
     dispatch(gotConversations(sortedData));
   } catch (error) {
     console.error(error);
@@ -117,6 +121,25 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const uploadImage = async (img) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", img);
+    formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET);
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_Name}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    const file = await res.json();
+    return file.url;
   } catch (error) {
     console.error(error);
   }
