@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { FormControl, FilledInput } from "@material-ui/core";
+import { FormControl, FilledInput, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { postMessage } from "../../store/utils/thunkCreators";
+import { postMessage, uploadImage } from "../../store/utils/thunkCreators";
 import PhotoLibraryIcon from "@material-ui/icons/PhotoLibrary";
 import SendIcon from "@material-ui/icons/Send";
 import IconButton from "@material-ui/core/IconButton";
-import { Grid } from "@material-ui/core";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import { uploadImage } from "../../store/utils/thunkCreators";
+import InputUI from "@material-ui/core/Input";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,18 +48,27 @@ const Input = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (text.trim() === "" && imageSelectedArr.length === 0) return;
-    const imgArray = [];
+    const imgUrlArray = [];
     let imgURL = null;
     if (imageSelectedArr) {
-      for (let i = 0, j = imageSelectedArr.length; i < j; i++) {
-        if (imageSelectedArr[i].length > 0) {
-          for (let k = 0, l = imageSelectedArr[i].length; k < l; k++) {
-            imgURL = await uploadImage(imageSelectedArr[i][k]);
-            imgArray.push(imgURL);
+      for (
+        let indexArr = 0, arrImgLength = imageSelectedArr.length;
+        indexArr < arrImgLength;
+        indexArr++
+      ) {
+        if (imageSelectedArr[indexArr].length > 0) {
+          for (
+            let nestedArrIndx = 0,
+              nestedArrLength = imageSelectedArr[indexArr].length;
+              nestedArrIndx < nestedArrLength;
+              nestedArrIndx++
+          ) {
+            imgURL = await uploadImage(imageSelectedArr[indexArr][nestedArrIndx]);
+            imgUrlArray.push(imgURL);
           }
         } else {
-          imgURL = await uploadImage(imageSelectedArr[i][0]);
-          imgArray.push(imgURL);
+          imgURL = await uploadImage(imageSelectedArr[indexArr][0]);
+          imgUrlArray.push(imgURL);
         }
       }
     }
@@ -71,7 +79,7 @@ const Input = (props) => {
       recipientId: otherUser.id,
       conversationId,
       sender: conversationId ? null : user,
-      attachments: imgArray,
+      attachments: imgUrlArray,
     };
     await postMessage(reqBody);
     setText("");
@@ -142,11 +150,11 @@ const Input = (props) => {
           className={classes.sendImgContainer}
         >
           <Grid item>
-            <input
+            <InputUI
               style={{ display: "none" }}
               accept="image/*"
               id="contained-button-file"
-              multiple
+              inputProps={{ multiple: true }}
               type="file"
               onChange={(event) => onChangeImgHandler(event)}
               onClick={(event) => (event.target.value = null)}
